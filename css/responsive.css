@@ -1,0 +1,108 @@
+@media (max-width : 480px) {
+	
+}
+
+/* Extra small devices (phones, less than 768px) */
+@media (max-width : 766px) {
+	/*home-carousel*/
+	 .controls li{
+		padding:30px 10px;
+	}
+	 .controls li span{
+		display:none;
+	}
+	 #home .carousel-caption {
+	  margin-top: -80px;
+	}
+	 #home .carousel-caption h1 {
+	  font-size: 22px;
+	  line-height: 35px;
+	  letter-spacing: 0px;
+	  margin-bottom: 0;	
+	}
+	 #home .carousel-caption p {
+	  font-size: 10px;
+	  margin-bottom: 15px;
+	}
+	 #home .carousel-caption .btn {
+	  font-size: 14px;
+	  padding: 10px 30px;
+	}
+#menu {
+    padding: 0px;
+    transition: all 0.8s;
+}
+
+
+}
+
+/* Landscape Mobile */
+@media only screen and (min-width : 480px) and (max-width : 767px) {
+
+	/* === HOME CAROUSEL === */
+	 .controls li{
+		padding:30px 10px;
+	}
+	 .controls li span{
+		font-size: 14px;
+		display:block;
+	}
+	 #home .carousel-caption {
+	  margin-top: -95px;
+	}
+	 #home .carousel-caption h1 {
+	  font-size: 33px;
+	  line-height: 56px;
+	}
+	 #home .carousel-caption p {
+	  font-size: 14px;
+	  margin-bottom: 25px;
+	}
+ 
+
+}
+
+
+/* Small devices (tablets, 768px and up) */
+@media (min-width : 768px) and (max-width : 991px) {
+
+
+	/*home-carousel*/
+	 .controls li{
+		padding:30px 10px;
+	}
+	 #home .carousel-caption {
+	  margin-top: -142px;
+	}
+	 #home .carousel-caption h1 {
+	  font-size: 60px;
+	  line-height: 44px;
+	  letter-spacing: -3px;
+	  margin-bottom: 30px;
+	}
+
+	
+}
+
+
+
+
+/* Medium devices (desktops, 992px and up) */
+@media (min-width : 992px) and (max-width : 1199px) {
+
+}
+
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width : 1200px) and (max-width : 1280px) {
+
+
+}
+
+
+
+/* Large devices (large desktops, 1200px and up) */
+@media (min-width : 1920px) {
+
+
+}
