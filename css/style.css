@@ -118,6 +118,10 @@ blockquote p {
     color: #808080;
 }
 
+.header-font {
+	font-size: 16px;
+}
+
 #preloader {
 	position: fixed;
 	top: 0;
