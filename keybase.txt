@@ -1,0 +1,56 @@
+==================================================================
+https://keybase.io/blockzilla
+--------------------------------------------------------------------
+
+I hereby claim:
+
+  * I am an admin of https://blockzilla.tech
+  * I am blockzilla (https://keybase.io/blockzilla) on keybase.
+  * I have a public key ASCpMQVzuVWIxxMd44d2KZ1yDnmf3QQvj3Mhr4wmF7aO7Ao
+
+To do so, I am signing this object:
+
+{
+  "body": {
+    "key": {
+      "eldest_kid": "0120a9310573b95588c7131de38776299d720e799fdd042f8f7321af8c2617b68eec0a",
+      "host": "keybase.io",
+      "kid": "0120a9310573b95588c7131de38776299d720e799fdd042f8f7321af8c2617b68eec0a",
+      "uid": "e3618cb50b35af722e9b5d3223cb6719",
+      "username": "blockzilla"
+    },
+    "merkle_root": {
+      "ctime": 1559570454,
+      "hash": "57ba0402632393c432dc6a49a6502b9996e94c3b636f00547374d5e6b40e5eb144b1d4eab92e2e4cae747929e825fe63d29dcf5adb004d18a8eaa94dc3d7749e",
+      "hash_meta": "b9a0e0d2a8a50af819716749aedfd9d88a811d5be6ec2f05472e42f7b2ee4cbe",
+      "seqno": 5497605
+    },
+    "service": {
+      "entropy": "qcb5653p3flyXqV8t2rTSgj6",
+      "hostname": "blockzilla.tech",
+      "protocol": "https:"
+    },
+    "type": "web_service_binding",
+    "version": 2
+  },
+  "client": {
+    "name": "keybase.io go client",
+    "version": "4.0.1"
+  },
+  "ctime": 1559570493,
+  "expire_in": 504576000,
+  "prev": "9bc650c5c9dc3071d28542551be7a2fcac0d5eb58e7fbd07d9a9d828320bf528",
+  "seqno": 11,
+  "tag": "signature"
+}
+
+which yields the signature:
+
+hKRib2R5hqhkZXRhY2hlZMOpaGFzaF90eXBlCqNrZXnEIwEgqTEFc7lViMcTHeOHdimdcg55n90EL49zIa+MJhe2juwKp3BheWxvYWTESpcCC8Qgm8ZQxcncMHHShUJVG+ei/KwNXrWOf70H2anYKDIL9SjEIBHMIoPlxGbzt93NDQ3muH6cqZ7shEhjxGmzOrs5ok6qAgHCo3NpZ8RAkSUfOIaZAKxxCV6Frb+87g6tvS8S17A7IuifZBiMKZ3tyvtPsGsA9wWGl2oFdTYH1y1qxqk3b6+FtOAKcsw1CahzaWdfdHlwZSCkaGFzaIKkdHlwZQildmFsdWXEIF8Siy+eHBtcslzuwMGnOi7B7FvFBEAJ3mMGcoBK49P9o3RhZ80CAqd2ZXJzaW9uAQ==
+
+And finally, I am proving ownership of this host by posting or
+appending to this document.
+
+View my publicly-auditable identity here: https://keybase.io/blockzilla
+
+==================================================================
