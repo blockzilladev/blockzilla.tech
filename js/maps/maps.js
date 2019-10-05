@@ -256,7 +256,7 @@ $(document).ready(function() {
     }
   }
 
-  var socket = io.connect('https://r1.algorand.network:5001/dashboard');
+  var socket = io.connect('http://r1.algorand.network:5001/dashboard');
   socket.on('connect', function(msg) {
       console.log("Connected!");
       for(item in msg){
