@@ -1,36 +1,15 @@
-/*------------------------------------------------------------------
-Template Name : Promo
-Version : 1.0
-Author : Beeskip
-URL    : http://themeforest.net/user/Beeskip
--------------------------------------------------------------------*/
-
 $(document).ready(function() {
   "use-strict";
 
   /*------------------------
     Copy to clipboard
   ----------------------------------*/
-
-  // Initialize the tooltip.
-  // $('#copy-button').tooltip();
-
-  // When the copy button is clicked, select the value of the text box, attempt
-  // to execute the copy command, and trigger event to update tooltip message
-  // to indicate whether the text was successfully copied.
   $('#copy-button').bind('click', function() {
     var input = document.querySelector('#copy-input');
     // input.setSelectionRange(0, input.value.length + 1);
     input.select();
     input.setSelectionRange(0, 99999)
     try {
-
-     //  var copyText = document.getElementById("myInput");
-     // copyText.select();
-     // copyText.setSelectionRange(0, 99999)
-     // document.execCommand("copy");
-
-
       var success = document.execCommand('copy');
       if (success) {
         $('#copy-button').trigger('copied', ['Copied!']);
@@ -65,7 +44,6 @@ $(document).ready(function() {
   /*------------------------
 		Scroll to Top
 	----------------------------------*/
-
   (function() {
     "use strict";
 
@@ -121,7 +99,6 @@ $(document).ready(function() {
   /* -------------------------------------------
   	Scroll To Section Animate
  ----------------------------------------- */
-
   $("a.page-scroll").on("click", function() {
     if (
       location.pathname.replace(/^\//, "") ==
@@ -145,7 +122,6 @@ $(document).ready(function() {
   /*--------------------------------------------------
 	portfolio filter items on button click
 	---------------------------------------------*/
-
   $(".portfolio-filter").on("click", "a", function(e) {
     e.preventDefault();
     var filterValue = $(this).attr("data-filter");
@@ -160,7 +136,6 @@ $(document).ready(function() {
   /*----------------------------------------
 	Portfolio Masonry
 	-------------------------------------------*/
-
   var $container = $(".masonry");
   $container.imagesLoaded(function() {
     $container.isotope({
@@ -213,7 +188,6 @@ $(document).ready(function() {
   /*---------------------------------------
     Team slider
     -------------------------------------------*/
-
   $(document).ready(function() {
     $(".team-carousel").owlCarousel({
       navigation: false, // Show next and prev buttons
@@ -238,7 +212,6 @@ $(document).ready(function() {
     /*---------------------------------------
    Testimonials slider
     -------------------------------------------*/
-
     $("#testimonial").owlCarousel({
       navigation: false, // Show next and prev buttons
       slideSpeed: 300,
@@ -250,14 +223,12 @@ $(document).ready(function() {
   /*---------------------------------------
     WOW JS
    --------------------------------------*/
-
   new WOW().init();
 }); // End document
 
 /*------------------------------
     Preloader
     --------------------------------------*/
-
 $(window).on("load", function() {
   // will first fade out the loading animation
   $("#status").fadeOut("slow");
