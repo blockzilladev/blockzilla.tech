@@ -256,7 +256,7 @@ $(document).ready(function() {
     }
   }
 
-  var socket = io.connect('https://blockzilla.tech/socket');
+  var socket = io.connect('https://blockzilla.tech:5001/');
   socket.on('connect', function(msg) {
       console.log("Connected!");
       for(item in msg){
