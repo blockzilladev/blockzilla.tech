@@ -159,33 +159,28 @@ hr {
 
 .btn{
 	display: inline-block;
-    color: #fff;
-    padding: 12px 25px;
-    text-transform: capitalize;
-    font-size: 14px;
-    border: 1px solid #96C346;
-    background-color: #96C346;
-    font-weight: 600;
-    letter-spacing: 1px;
+  color: #fff;
+  padding: 12px 25px;
+  text-transform: capitalize;
+  font-size: 14px;
+  border: 1px solid #96C346;
+  background-color: #96C346;
+  font-weight: 600;
+  letter-spacing: 1px;
 	border-radius:0;
 }
 .btn-promo{
-
-    border: 1px solid #96C346;
-    background-color: #96C346;
-
+  border: 1px solid #96C346;
+  background-color: #96C346;
 }
 .btn-promo-border{
 
-    border: 1px solid #96C346;
+  border: 1px solid #96C346;
 	background-color: transparent;
-
 }
 .btn-promo-border-light{
-
-    border: 1px solid #fff;
+	border: 1px solid #fff;
 	background-color:transparent;
-
 }
 
 .dark-color{
@@ -329,7 +324,6 @@ header {
 	overflow: auto;
 }
 
-
 /*Particle Homepage*/
 .hero-section {
     width: 100%;
@@ -350,8 +344,8 @@ header {
     background-size: cover;
 }
 #particles-js{
-  //position:absolute;
-  //z-index:999;
+  /* position:absolute;
+  z-index:999; */
   width: 100%;
   height: 100%;
   background-size: cover;
@@ -364,13 +358,13 @@ header {
 
 
 /*  Parallax Image */
-.parallax-image 	.parallax-bg {
+.parallax-image .parallax-bg {
     padding: 0;
 
     background-repeat: repeat;
     background-attachment: fixed;
     background-position: center center;
-    background-image: url(../img/header-bg.jpg);
+    background-image: url(../img/logo_size_icon.jpg);
 
     -webkit-background-size: cover;
        -moz-background-size: cover;
@@ -432,58 +426,56 @@ header p{
 ----------------------------------------------------*/
 video,
 object {
-    min-width:100%;
-    min-height:100%;
+  min-width:100%;
+  min-height:100%;
 }
 
 
 
 #tt-home-carousel {
-    overflow: hidden;
-    position: relative;
+  overflow: hidden;
+  position: relative;
 }
 
 #tt-home-carousel img{
-    width: 100%;
-    background-size: cover;
-
+  width: 100%;
+  background-size: cover;
 }
 
 .carousel-fade .carousel-inner .item {
-    max-height: 700px;
-    opacity:.8;
-    -webkit-transition-property:opacity;
-    -moz-transition-property:opacity;
-    -o-transition-property:opacity;
-    transition-property:opacity
-
+  max-height: 700px;
+  opacity:.8;
+  -webkit-transition-property:opacity;
+  -moz-transition-property:opacity;
+  -o-transition-property:opacity;
+  transition-property:opacity
 }
 .carousel-fade .carousel-inner .active {
-    opacity: 1
+  opacity: 1
 }
 .carousel-fade .carousel-inner .active.left,
 .carousel-fade .carousel-inner .active.right {
-    left: 0;
-    opacity: 0;
-    z-index: 1;
+  left: 0;
+  opacity: 0;
+  z-index: 1;
 }
 .carousel-fade .carousel-inner .next.left,
 .carousel-fade .carousel-inner .prev.right {
-    opacity: 1
+  opacity: 1
 }
 
 .carousel-fade .carousel-inner .item:after {
-    content: "";
-    position: absolute;
-    top: 0;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(0, 0, 0, .5);
+  content: "";
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, .5);
 }
 
 .carousel-fade .carousel-control {
-    z-index: 20
+  z-index: 20
 }
 
 
@@ -2505,37 +2497,37 @@ ul, ol {
 	18- Error Page 404
 -----------------------------------*/
 .page-404 .erroe-title {
-    font-size: 30px;
-    line-height: 28px;
-    color: #333;
-    margin-bottom: 15px;
+  font-size: 30px;
+  line-height: 28px;
+  color: #333;
+  margin-bottom: 15px;
 }
 
 .page-404 .error-des {
-    font-size: 26px;
-    padding-left: 15px;
+  font-size: 26px;
+  padding-left: 15px;
 }
 .page-404 .error-link {
-    font-size: 14px;
-    padding-left: 15px;
+  font-size: 14px;
+  padding-left: 15px;
 }
 .page-404 .error-link-home {
-    color: #525252;
-    text-transform: uppercase;
-    border: none;
+  color: #525252;
+  text-transform: uppercase;
+  border: none;
 }
 
 .page-404 .error-link-home:hover {
-    color: #96C346;
+	color: #96C346;
 	background:transparent;
-    text-transform: uppercase;
-    border: none;
+	text-transform: uppercase;
+	border: none;
 }
 
 .page-404 .error-link-home i {
-    -webkit-transition: padding 0.4s ease-in-out 0s;
-    -moz-transition: padding 0.4s ease-in-out 0s;
-    transition: padding 0.4s ease-in-out 0s;
+  -webkit-transition: padding 0.4s ease-in-out 0s;
+  -moz-transition: padding 0.4s ease-in-out 0s;
+  transition: padding 0.4s ease-in-out 0s;
 }
 .page-404 .error-link-home:hover i {
 	padding-left: 5px;
