@@ -235,7 +235,7 @@ $(window).on("load", function() {
 
   // will fade out the whole DIV that covers the website.
   $("#preloader")
-    .delay(500)
+    .delay(333)
     .fadeOut("slow")
     .remove();
 });

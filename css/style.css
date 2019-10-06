@@ -2669,3 +2669,10 @@ ul, ol {
 .page-404 .error-link-home:hover i {
   padding-left: 5px;
 }
+
+/*
+Map Section
+ */
+#map {
+	padding-bottom: 60px;
+}
