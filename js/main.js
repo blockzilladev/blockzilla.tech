@@ -229,7 +229,7 @@ $(document).ready(function() {
 /*------------------------------
     Preloader
     --------------------------------------*/
-$(window).on("ready", function() {
+$(window).on("load", function() {
   // will first fade out the loading animation
   $("#status").fadeOut("slow");
 
