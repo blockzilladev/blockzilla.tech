@@ -1,213 +1,289 @@
-<!DOCTYPE html>
-<html lang="en">
-
+<!doctype html>
+<html lang="en" data-theme="chain">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Blockzilla - Crypto Blockchain</title>
-  <meta name="description"
-    content="Blockzilla - blockchain mining rig cryptocurrency bitcoin ethereum litecoin horizen masternodes lightning network openbazaar algorand validator staking nft cosmos osmosis stargaze ion neta dao">
-  <meta name="author" content="Blockzilla">
-  <link rel="shortcut icon" href="img/favicon.png" type="image/x-icon">
-  <link rel="stylesheet" type="text/css" href="css/bootstrap.min.css">
-  <link rel="stylesheet" type="text/css" href="css/font-awesome-4.7.0/css/font-awesome.min.css">
-  <link rel="stylesheet" href="js/maps/jquery-jvectormap-2.0.3.css" type="text/css" media="screen" />
-  <link rel="stylesheet" href="css/elegant-icons.css" />
-  <link rel="stylesheet" href="js/lightbox/lightbox.min.css" />
-  <link href="css/owl.carousel.css" rel="stylesheet" media="screen">
-  <link href="css/owl.theme.css" rel="stylesheet" media="screen">
-  <link rel="stylesheet" type="text/css" href="css/style.css">
-  <link rel="stylesheet" type="text/css" href="css/responsive.css">
-  <link class="colors" rel="stylesheet" href="css/colors/green.css" type="text/css">
-  <link rel="stylesheet" type="text/css" href="css/animate.min.css">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-115630199-1"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag() {
-      dataLayer.push(arguments);
-    }
-    gtag("js", new Date());
-    gtag("config", "UA-115630199-1");
-  </script>
-  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,900,300' rel='stylesheet' type='text/css'>
-  <link href='https://fonts.googleapis.com/css?family=Open+Sans:400,700,800,600,300' rel='stylesheet' type='text/css'>
-  <!--[if lt IE 9]>
-    <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
-</head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Blockzilla — Autonomous Blockchain &amp; AI Infrastructure</title>
+<meta name="description" content="Blockzilla builds and operates decentralised infrastructure for the agentic future — full nodes, validators and autonomous AI agents that run blockchain and peer-to-peer networks and ship themselves on the Aura platform.">
+<meta name="keywords" content="bitcoin, bitcoin whitepaper, satoshi nakamoto, cryptocurrency, blockchain, decentralised infrastructure, autonomous agents, agentic AI, blockchain automation, AI infrastructure, full nodes, validators, peer-to-peer networks, Aura platform, self-operating infrastructure, web3, agentic future">
+<meta name="author" content="Blockzilla">
+<meta name="theme-color" content="#05070a">
+<!-- Bitcoin whitepaper — hosted for reference & SEO -->
+<link rel="alternate" type="application/pdf" title="Bitcoin: A Peer-to-Peer Electronic Cash System — Satoshi Nakamoto" href="docs/bitcoin-whitepaper.pdf">
+<meta property="og:title" content="Blockzilla — Autonomous Blockchain &amp; AI Infrastructure">
+<meta property="og:description" content="Decentralised infrastructure, intelligently operated. Autonomous AI agents that run blockchain and P2P networks — and ship themselves on Aura.">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Blockzilla">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Blockzilla — Autonomous Blockchain &amp; AI Infrastructure">
+<meta name="twitter:description" content="Decentralised infrastructure, intelligently operated — powering the agentic future.">
+<meta name="twitter:site" content="@BlockzillaTech">
 
+<!-- Fonts: Chakra Petch (display) · IBM Plex Sans (body) · IBM Plex Mono (mono) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+
+<!-- Blockzilla design system (Chain theme) — vendored, ships with the site -->
+<link rel="stylesheet" href="ds/tokens.css">
+<link rel="stylesheet" href="ds/components.css">
+<link rel="stylesheet" href="styles.css">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+<!-- three.js module map -->
+<script type="importmap">
+{
+  "imports": {
+    "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+    "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+  }
+}
+</script>
+</head>
 <body>
-  <div id="preloader">
-    <div id="status"> <img src="img/preloader.gif" height="64" width="64" alt="preloader"> </div>
+
+<!-- ==========================================================================
+     SVG DEFS — faceted brand mark + line icons (currentColor)
+     ========================================================================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+  <symbol id="ico" viewBox="0 0 100 100">
+    <g fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round">
+      <polygon points="12,28 50,6 50,40"  fill-opacity=".55"/>
+      <polygon points="50,6 88,28 50,40"  fill-opacity=".82"/>
+      <polygon points="88,28 68,58 50,40" fill-opacity=".46"/>
+      <polygon points="88,28 88,72 68,58" fill-opacity=".70"/>
+      <polygon points="88,72 50,94 68,58" fill-opacity=".50"/>
+      <polygon points="50,94 68,58 32,58" fill-opacity=".88"/>
+      <polygon points="50,94 32,58 12,72" fill-opacity=".60"/>
+      <polygon points="12,72 32,58 12,28" fill-opacity=".40"/>
+      <polygon points="12,28 32,58 50,40" fill-opacity=".70"/>
+      <polygon points="50,40 32,58 68,58" fill-opacity="1"/>
+    </g>
+  </symbol>
+  <g fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+    <symbol id="ic-arrow"  viewBox="0 0 24 24"><line x1="4" y1="12" x2="19.5" y2="12"/><polyline points="13.5,5.5 20,12 13.5,18.5"/></symbol>
+    <symbol id="ic-node"   viewBox="0 0 24 24"><circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M11 7 6.5 15.8M13 7l4.5 8.8M7.4 18h9.2"/></symbol>
+    <symbol id="ic-bolt"   viewBox="0 0 24 24"><polygon points="13,2 4,14 11,14 10,22 20,9 13,9"/></symbol>
+    <symbol id="ic-cube"   viewBox="0 0 24 24"><path d="M12 3 20 7.5v9L12 21 4 16.5v-9Z"/><path d="M12 3v18M4 7.5l8 4.5 8-4.5"/></symbol>
+    <symbol id="ic-spark"  viewBox="0 0 24 24"><path d="M12 3.2c.6 4.6 1.9 5.9 6.5 6.5-4.6.6-5.9 1.9-6.5 6.5-.6-4.6-1.9-5.9-6.5-6.5 4.6-.6 5.9-1.9 6.5-6.5Z"/></symbol>
+    <symbol id="ic-chart"  viewBox="0 0 24 24"><polyline points="4,4 4,20 20,20"/><polyline points="7.5,14.5 11,10.5 14,13 19,6.5"/></symbol>
+    <symbol id="ic-globe"  viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M3.5 12h17M12 3.5c2.5 2.6 2.5 14.4 0 17M12 3.5c-2.5 2.6-2.5 14.4 0 17"/></symbol>
+    <symbol id="ic-shield" viewBox="0 0 24 24"><path d="M12 3 19 6v6c0 5-3.5 7.6-7 9-3.5-1.4-7-4-7-9V6Z"/><polyline points="9,12 11.2,14.2 15.5,9.8"/></symbol>
+    <symbol id="ic-x"      viewBox="0 0 24 24"><path d="M4 4l16 16M20 4 4 20"/></symbol>
+    <symbol id="ic-git"    viewBox="0 0 24 24"><circle cx="6" cy="6" r="2.3"/><circle cx="6" cy="18" r="2.3"/><circle cx="17" cy="9" r="2.3"/><path d="M6 8.3v7.4M8.1 7.2 15 8.6M17 11.3c0 4-5 2.4-5 6.4"/></symbol>
+  </g>
+</defs></svg>
+
+<!-- WebGL scene canvas (fixed, full-screen behind everything) -->
+<canvas id="bg" aria-hidden="true"></canvas>
+<div class="scene-scrim" aria-hidden="true"></div>
+
+<!-- ==========================================================================
+     TOP NAV
+     ========================================================================== -->
+<header class="nav">
+  <a class="logo" href="#top" aria-label="Blockzilla home">
+    <svg class="mark"><use href="#ico"/></svg>
+    <span class="logo__word">BLOCKZILLA</span>
+  </a>
+  <nav class="nav__links">
+    <a href="#about">About</a>
+    <a href="#services">Services</a>
+    <a href="#ai">AI on Aura</a>
+    <a href="#network">Network</a>
+  </nav>
+  <a class="btn btn--primary btn--sm" href="#contact">
+    Connect <svg class="ic"><use href="#ic-arrow"/></svg>
+  </a>
+</header>
+
+<!-- ==========================================================================
+     HERO — full-viewport, canvas shows through the frosted panel
+     ========================================================================== -->
+<section class="hero" id="top">
+  <div class="hero__panel">
+    <span class="eyebrow">Blockchain &nbsp;·&nbsp; AI &nbsp;·&nbsp; Infrastructure</span>
+    <div class="hero__lockup">
+      <svg class="hero__mark"><use href="#ico"/></svg>
+      <h1 class="hero__title">BLOCKZILLA</h1>
+    </div>
+    <p class="hero__tag">Decentralised infrastructure, <span class="t-accent">intelligently operated.</span></p>
+    <p class="hero__sub">We run the decentralised infrastructure that holds networks together — and build the autonomous AI agents that operate it, powering an agentic future on Aura.</p>
+    <div class="hero__cta row">
+      <a class="btn btn--primary btn--lg" href="#about">Discover <svg class="ic"><use href="#ic-arrow"/></svg></a>
+      <a class="btn btn--outline btn--lg" href="#ai">AI on Aura</a>
+    </div>
   </div>
-  <nav id="menu" class="navbar navbar-default navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
-          data-target="#bs-example-navbar-collapse-1">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-        </button>
-        <a class="navbar-brand" href="index.html">
-          <img src="img/favicon.png" style="float: left; max-height: 1em; padding-right: .25em;" />
-          <strong>Blockzilla</strong>
+
+  <div class="hero__hint">
+    <span class="mono">drag to steer&nbsp;·&nbsp;WASD to fly&nbsp;·&nbsp;pinch to zoom</span>
+    <a href="#about" class="hero__scroll" aria-label="Scroll down"><span></span></a>
+  </div>
+</section>
+
+<!-- ==========================================================================
+     CONTENT — opaque, scrolls up over the fixed scene
+     ========================================================================== -->
+<main class="content" id="content">
+
+  <!-- ABOUT -->
+  <section class="section" id="about">
+    <div class="section__grid">
+      <div class="stack">
+        <span class="eyebrow">01 — Who we are</span>
+        <h2 class="t-h1">From mining rigs to autonomous agents.</h2>
+        <p class="t-body t-muted">Blockzilla began where the movement began — GPU rigs humming through the Proof-of-Work era, bootstrapping networks one hash at a time. That decentralisation experiment never stopped; it matured.</p>
+        <p class="t-body t-muted">Today we run decentralised infrastructure — full nodes and validators across blockchain and peer-to-peer ecosystems. We've fused that operational backbone with AI: autonomous agents that watch the network, tune the fleet and ship on their own — laying the groundwork for a self-operating, agentic future.</p>
+        <blockquote class="quote">
+          “The Times 03/Jan/2009 — Chancellor on brink of second bailout for banks.”
+          <cite>— embedded in the genesis block</cite>
+        </blockquote>
+      </div>
+      <div class="stack about__panel">
+        <div class="card card--glass card--pad about__stat">
+          <span class="mono t-faint">GENESIS</span>
+          <p class="t-body">Proof of Work bootstrapped an entire economy from nothing. We were there for it — and we're building what comes next.</p>
+        </div>
+        <div class="grid grid--2" style="--grid-gap:var(--sp-3)">
+          <div class="pill-stat"><b>Full nodes</b><span>Blockchain · P2P</span></div>
+          <div class="pill-stat"><b>Validators</b><span>Decentralised</span></div>
+          <div class="pill-stat"><b>Agents</b><span>Autonomous ops</span></div>
+          <div class="pill-stat"><b>Aura infra</b><span>Agentic backbone</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICES -->
+  <section class="section section--band" id="services">
+    <header class="section__head">
+      <span class="eyebrow">02 — What we do</span>
+      <h2 class="t-h1">Infrastructure services</h2>
+      <p class="section__lede t-muted">A collective of IT &amp; engineering operators running a wide range of blockchain services — now with an AI layer that never sleeps.</p>
+    </header>
+    <div class="grid grid--4 svc-grid">
+      <article class="card card--pad card--hover svc">
+        <span class="svc__ic"><svg class="ic"><use href="#ic-chart"/></svg></span>
+        <h3 class="t-h3">Chain Automation</h3>
+        <p class="t-muted">Automated monitoring, indexing and on-chain tooling — instrumented and self-healing.</p>
+      </article>
+      <article class="card card--pad card--hover svc">
+        <span class="svc__ic"><svg class="ic"><use href="#ic-cube"/></svg></span>
+        <h3 class="t-h3">Node Infrastructure</h3>
+        <p class="t-muted">High-performance nodes and validators with real uptime — resilient and decentralised.</p>
+      </article>
+      <article class="card card--pad card--hover svc">
+        <span class="svc__ic"><svg class="ic"><use href="#ic-spark"/></svg></span>
+        <h3 class="t-h3">AI Agents</h3>
+        <p class="t-muted">Autonomous agents that operate the fleet, react in real time and act without waiting on humans.</p>
+      </article>
+      <article class="card card--pad card--hover svc">
+        <span class="svc__ic"><svg class="ic"><use href="#ic-node"/></svg></span>
+        <h3 class="t-h3">Aura Agent Infrastructure</h3>
+        <p class="t-muted">The platform where our agents live — ship autonomous, self-operating services to production on Aura.</p>
+      </article>
+    </div>
+  </section>
+
+  <!-- AI ON AURA -->
+  <section class="section" id="ai">
+    <div class="section__grid section__grid--flip">
+      <div class="stack">
+        <span class="eyebrow">03 — AI on Aura</span>
+        <h2 class="t-h1">Agents that operate themselves.</h2>
+        <p class="t-body t-muted">Aura is where our AI lives — a platform for shipping autonomous agents straight to production. Built on the latest Claude models, our agents read telemetry, reason about network state, and act: scaling infrastructure, rotating validators, patching nodes and answering on-call — no human in the loop.</p>
+        <ul class="feature-list">
+          <li><svg class="ic"><use href="#ic-shield"/></svg> <span><b>Self-healing infra</b> — agents detect drift and remediate before humans wake up.</span></li>
+          <li><svg class="ic"><use href="#ic-node"/></svg> <span><b>Network-aware</b> — live chain state, validator sets and telemetry as first-class context.</span></li>
+          <li><svg class="ic"><use href="#ic-bolt"/></svg> <span><b>Ship on Aura</b> — one command from prototype to a live, autonomous service.</span></li>
+        </ul>
+        <a class="btn btn--primary" href="#contact">Build an agent <svg class="ic"><use href="#ic-arrow"/></svg></a>
+      </div>
+      <div class="ai-card card card--glass card--pad">
+        <div class="row row--between ai-card__head">
+          <span class="mono t-accent">agent://blockzilla/ops</span>
+          <span class="badge badge--success">live</span>
+        </div>
+        <!-- animated aura terminal — populated by terminal.js -->
+        <div class="ai-log" id="ai-term" role="img" aria-label="Animated terminal showing autonomous Aura agent commands"></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS / NETWORK — WebGL transaction globe behind the content -->
+  <section class="section section--band net" id="network">
+    <canvas id="globe" aria-hidden="true"></canvas>
+    <div class="net__scrim" aria-hidden="true"></div>
+    <div class="net__inner">
+      <header class="section__head">
+        <span class="eyebrow">04 — On the network</span>
+        <h2 class="t-h1">Transactions moving across the world</h2>
+        <p class="section__lede t-muted">Live traffic arcing between major data-center hubs worldwide — the decentralised backbone our autonomous agents operate around the clock.</p>
+      </header>
+      <div class="grid grid--4 stat-grid">
+        <div class="stat statbox"><span class="stat__value">14+</span><span class="stat__label">Protocols &amp; chains</span></div>
+        <div class="stat statbox"><span class="stat__value">99.9%</span><span class="stat__label">Node uptime</span></div>
+        <div class="stat statbox"><span class="stat__value">24/7</span><span class="stat__label">Agent operations</span></div>
+        <div class="stat statbox"><span class="stat__value">Global</span><span class="stat__label">Data-center hubs</span></div>
+      </div>
+      <div class="chip-row">
+        <span class="chip">Decentralised Infra</span>
+        <span class="chip">Autonomous Agents</span>
+        <span class="chip">Full Nodes</span>
+        <span class="chip">Validators</span>
+        <span class="chip">P2P Networks</span>
+        <span class="chip">On-Chain Automation</span>
+        <span class="chip">Self-Healing Ops</span>
+        <span class="chip">Agentic AI</span>
+        <span class="chip">Aura Platform</span>
+        <span class="chip">Web3</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA / CONTACT -->
+  <section class="section cta" id="contact">
+    <div class="card card--glass card--pad cta__card">
+      <svg class="cta__mark mark"><use href="#ico"/></svg>
+      <span class="eyebrow">Join the network</span>
+      <h2 class="t-display">Discover blockchain.<br>Operate it with AI.</h2>
+      <p class="t-body t-muted">Running a validator, building on-chain, or curious about autonomous ops on Aura? We're social — come say hi.</p>
+      <div class="row cta__links">
+        <a class="btn btn--primary btn--lg" href="https://twitter.com/blockzillatech" target="_blank" rel="noopener">
+          <svg class="ic"><use href="#ic-x"/></svg> @BlockzillaTech
+        </a>
+        <a class="btn btn--outline btn--lg" href="https://github.com/blockzillatech" target="_blank" rel="noopener">
+          <svg class="ic"><use href="#ic-git"/></svg> GitHub
         </a>
       </div>
-      <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-        <ul class="nav navbar-nav navbar-right">
-          <li><a href="#home" class="page-scroll header-font">Home</a></li>
-          <li><a href="#about-section" class="page-scroll header-font">About</a></li>
-          <li><a href="#services-section" class="page-scroll header-font">Services</a></li>
-          <li><a href="#social" class="page-scroll header-font">Social</a></li>
-        </ul>
-      </div>
     </div>
-  </nav>
+  </section>
 
-  <header class="text-center welcome-section slider-section slide-fullHeight parallax-bg" id="home">
-    <div class="carousel-caption">
-      <h1><span>BlockZilla</span></h1>
-      <p>Discover Blockchain </p>
-      <a class="btn page-scroll" href="#about-section"> More</a>
-    </div>
-  </header>
-
-  <div id="about-section">
-    <div class="container">
-      <div class="section-title text-center">
-        <h2><strong>About</strong> us</h2>
-        <hr>
-        <div class="clearfix"></div>
-        <p>Blockchain technology is an amazing revoloution, rapidly maturing, challanging the information technology
-          landscape</p>
-      </div>
-      <div class="row">
-        <div class="col-md-6 wow fadeInLeft animated" style="visibility: visible; animation-name: fadeInLeft;"> <img
-            src="img/rigs-zotac-1060-6GB.jpg" class="img-responsive" alt="about us"> </div>
-        <div class="col-md-6 wow fadeInRight animated" style="visibility: visible; animation-name: fadeInRight;">
-          <h3 class="pad">Who We Are</h3>
-          <p class="pad">The <a href="docs/bitcoin.pdf">Bitcoin whitepaper</a> spawned a decentralisation movement which
-            continues to grow a rapid pace. We began experimenting with GPU crypto mining rigs. "Proof of Work"
-            bootstrapped the whole Bitcoin network and we enjoyed being
-            part of this. </p>
-          <div class="space"></div>
-          <blockquote>
-            <p>"The Times 03/Jan/2009 Chancellor on brink of second bailout for banks.
-              "</p>
-            Satoshi Nakimoto
-          </blockquote>
-          <div class="space"></div>
-          <p class="pad">Today we run full nodes, expirement with different software innovations like the Bitcoin
-            Lightning Network, Proof of Stake Validators, IBC relayers, DeFI, NFTS.</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <div id="services-section" class="text-center">
-    <div class="services-overlay"></div>
-    <div class="container" style="background: rgba(0,0,0,0.5)">
-      <div class="section-title">
-        <h2>Our <strong>Services</strong></h2>
-        <hr>
-        <div class="clearfix"></div>
-        <p><strong>Utilising our collective IT &amp; Engineering experience we work on a wide range of blockchain
-            services.</strong></p>
-      </div>
-      <div class="row">
-        <div class="col-md-3 col-sm-6 service"> <i class="fa fa-bitcoin"></i>
-          <h3><strong>Lightning Network</strong></h3>
-          <p>Join the Bitcoin second layer network</p>
-        </div>
-        <div class="col-md-3 col-sm-6 service"> <i class="fa fa-line-chart"></i>
-          <h3><strong>Chain Tools</strong></h3>
-          <p>Automated tools</p>
-        </div>
-        <div class="col-md-3 col-sm-6 service"> <i class="fa fa-shopping-cart"></i>
-          <h3><strong>eCommerce</strong></h3>
-          <p>Blockchain eCommerce soloutions.</p>
-        </div>
-        <div class="col-md-3 col-sm-6 service"> <i class="fa fa-server"></i>
-          <h3><strong>Node Hosting</strong></h3>
-          <p>High peformance node infrastructure</p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-
-
-
-
-
-  <div id="statistics-section" class="text-center">
-    <div class="container" style="background: rgba(0,0,0,0.5)">
-      <div class="col-md-3 col-sm-6 part statistic">
-        <i class="fa fa-cubes" aria-hidden="true"></i>
-        <p class="num" id="lines-of-code">Blockchain</p>
-        <p class="title"><strong>Protocols</strong></p>
-      </div>
-      <div class="col-md-3 col-sm-6 part statistic">
-        <i class="fa fa-code-fork" aria-hidden="true"></i>
-        <p class="num" id="cups-of-coffee">API</p>
-        <p class="title"><strong>Tools</strong></p>
-      </div>
-      <div class="col-md-3 col-sm-6 part statistic">
-        <i class="fa fa-microchip" aria-hidden="true"></i>
-        <p class="num" id="">specialised</p>
-        <p class="title"><strong>hardware</strong></p>
-      </div>
-      <div class="col-md-3 col-sm-6 part statistic">
-        <i class="fa fa-bar-chart" aria-hidden="true"></i>
-        <p class="num" id="satisfied-customers">Network</p>
-        <p class="title"><strong>statistics</strong></p>
-      </div>
-    </div>
-  </div>
-
-  <div id="back-to-top">
-    <a href="#top"><i class="arrow_carrot-up"></i></a>
-  </div>
-
-
-  <div id="map">
-    <div id="world-map-marker"></div>
-  </div>
-
-  <footer class="footer-section text-center" id="social">
-    <div class="container">
-      <h3>We are social, You can follow us</h3>
-      <div class="social-links">
-        <ul class="list-inline">
-          <li><a href="https://twitter.com/blockzillatech"><i class="fa fa-twitter"></i></a></li>
-          <li><a href="http://github.com/blockzillatech"><i class="fa fa-github"></i></a></li>
-        </ul>
-      </div>
-      <span class="copyright">Blockzilla - All rights reserved ©2024</span>
+  <footer class="foot">
+    <div class="row row--between foot__row">
+      <a class="logo" href="#top">
+        <svg class="mark"><use href="#ico"/></svg>
+        <span class="logo__word">BLOCKZILLA</span>
+      </a>
+      <span class="mono t-faint">Blockchain &amp; AI infrastructure · All rights reserved © 2026</span>
+      <nav class="foot__links row">
+        <a class="mono t-faint" href="docs/bitcoin-whitepaper.pdf" target="_blank" rel="noopener">Bitcoin Whitepaper</a>
+        <a class="mono t-faint" href="https://github.com/blockzillatech" target="_blank" rel="noopener">GitHub</a>
+        <span class="mono t-faint">Built on <span class="t-accent">Aura</span></span>
+      </nav>
     </div>
   </footer>
-  <script type="text/javascript" src="js/particles.min.js"></script>
-  <script type="text/javascript" src="js/jquery-3.2.1.min.js"></script>
-  <script type="text/javascript" src="js/modernizr.custom.js"></script>
-  <script type="text/javascript" src="js/bootstrap.min.js"></script>
-  <script type="text/javascript" src="js/wow.min.js"></script>
-  <script type="text/javascript" src="js/jqBootstrapValidation.js"></script>
-  <script type="text/javascript" src="js/contact.js"></script>
-  <script type="text/javascript" src="js/owl.carousel.js"></script>
-  <script type="text/javascript" src='js/jquery.parallax-1.1.3.js'></script>
-  <script type="text/javascript" src='js/jquery.appear.js'></script>
-  <script type="text/javascript" src='js/jquery.countto.js'></script>
-  <script type="text/javascript" src="js/monsory/isotope.pkgd.min.js"></script>
-  <script type="text/javascript" src="js/monsory/imagesloaded.pkgd.min.js"></script>
-  <script type="text/javascript" src="js/lightbox/lightbox.min.js"></script>
-  <script type="text/javascript" src="js/main.js"></script>
-  <script type="text/javascript" src="js/particles-conf.js"></script>
-  <script type="text/javascript" src="js/maps/jquery-jvectormap-2.0.3.min.js"></script>
-  <script type="text/javascript" src="js/maps/maps.js"></script>
-  <script type="text/javascript" src="js/maps/jquery-jvectormap-world-mill.js"></script>
-</body>
+</main>
 
+<script type="module" src="hero.js"></script>
+<script type="module" src="globe.js"></script>
+<script src="terminal.js" defer></script>
+<script>
+  // graceful fallback: if WebGL never initialises, reveal a static gradient
+  setTimeout(() => {
+    if (!document.documentElement.classList.contains('webgl-ready'))
+      document.documentElement.classList.add('webgl-failed');
+  }, 4000);
+</script>
+</body>
 </html>
