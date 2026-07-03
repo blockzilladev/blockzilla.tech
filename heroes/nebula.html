@@ -1,0 +1,638 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+</head>
+<!-- BLOCKZILLA — SHADER NEBULA hero. Iteration 03/03. Self-contained. -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500&display=swap" rel="stylesheet">
+<title>BLOCKZILLA — The Eternal Ledger</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+
+<style>
+:root{
+  --color-void:#04060A; --color-base:#06080A; --color-panel:#0C1013;
+  --color-line:#17241D; --color-text:#E6F0EA; --color-dim:#6F8079;
+  --color-energy:#1CF09A; --color-energy-2:#5BE9FF; --color-mark:#BFEFD9;
+  --edge:clamp(18px,3.2vw,52px);
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{background:var(--color-void);color:var(--color-text);
+  font-family:"IBM Plex Sans",system-ui,sans-serif;-webkit-font-smoothing:antialiased}
+body{overflow-x:hidden;cursor:none}
+::selection{background:var(--color-energy);color:var(--color-void)}
+a{color:inherit;text-decoration:none}
+
+/* ---- WebGL canvas + static fallback ---- */
+#scene{position:fixed;inset:0;width:100vw;height:100svh;display:block;z-index:0}
+#fallback{position:fixed;inset:0;z-index:0;display:none;
+  background:
+    radial-gradient(120% 90% at 18% 22%, rgba(28,240,154,.14), transparent 55%),
+    radial-gradient(90% 80% at 82% 68%, rgba(91,233,255,.10), transparent 60%),
+    radial-gradient(140% 120% at 50% 120%, rgba(28,240,154,.10), transparent 60%),
+    var(--color-void);
+}
+#fallback::after{content:"";position:absolute;inset:0;opacity:.5;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='140' height='140'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2'/></filter><rect width='100%25' height='100%25' filter='url(%23n)' opacity='.5'/></svg>")}
+.nowebgl #scene{display:none}
+.nowebgl #fallback{display:block}
+
+/* ---- custom cursor ---- */
+.cursor{position:fixed;top:0;left:0;width:12px;height:12px;border-radius:50%;
+  background:var(--color-energy);mix-blend-mode:screen;pointer-events:none;z-index:9999;
+  transform:translate(-50%,-50%);transition:width .25s,height .25s,background .25s;
+  box-shadow:0 0 14px var(--color-energy)}
+.cursor.big{width:46px;height:46px;background:rgba(91,233,255,.35);box-shadow:0 0 26px rgba(91,233,255,.5)}
+@media (hover:none){.cursor{display:none}body{cursor:auto}}
+
+/* ---- HUD scaffolding (hairlines, corner ticks) ---- */
+.frame{position:fixed;inset:0;z-index:2;pointer-events:none}
+.tick{position:absolute;width:16px;height:16px;border:1px solid var(--color-line)}
+.tick.tl{top:var(--edge);left:var(--edge);border-right:0;border-bottom:0}
+.tick.tr{top:var(--edge);right:var(--edge);border-left:0;border-bottom:0}
+.tick.bl{bottom:var(--edge);left:var(--edge);border-right:0;border-top:0}
+.tick.br{bottom:var(--edge);right:var(--edge);border-left:0;border-top:0}
+
+.mono{font-family:"IBM Plex Mono",monospace;font-weight:500;
+  font-size:11px;letter-spacing:.22em;text-transform:uppercase;color:var(--color-dim)}
+.mono b{color:var(--color-energy);font-weight:600}
+.mono i{color:var(--color-energy-2);font-style:normal}
+
+/* ---- nav ---- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:5;
+  display:flex;align-items:center;justify-content:space-between;
+  padding:calc(var(--edge) - 4px) var(--edge)}
+.brand{display:flex;align-items:center;gap:12px;pointer-events:auto}
+.brand svg{width:26px;height:26px;color:var(--color-mark);filter:drop-shadow(0 0 6px rgba(28,240,154,.35))}
+.brand .wm{font-family:"Chakra Petch",sans-serif;font-weight:700;letter-spacing:.14em;
+  font-size:15px;text-transform:uppercase}
+.navlinks{display:flex;gap:30px;pointer-events:auto}
+.navlinks a{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--color-dim);position:relative;padding:4px 0;transition:color .3s}
+.navlinks a::after{content:"";position:absolute;left:0;bottom:0;width:0;height:1px;
+  background:var(--color-energy);transition:width .35s cubic-bezier(.16,1,.3,1)}
+.navlinks a:hover,.navlinks a:focus-visible{color:var(--color-text)}
+.navlinks a:hover::after,.navlinks a:focus-visible::after{width:100%}
+
+/* ---- hero layout (asymmetric, off-axis) ---- */
+.hero{position:relative;z-index:3;min-height:100svh;
+  display:grid;grid-template-columns:1fr;align-items:end;
+  padding:0 var(--edge) clamp(96px,14vh,150px)}
+.hero-inner{max-width:min(1100px,86vw)}
+
+.eyebrow{display:flex;align-items:center;gap:14px;margin-bottom:24px}
+.eyebrow .rule{height:1px;width:56px;background:linear-gradient(90deg,var(--color-energy),transparent)}
+
+.headline{font-family:"Chakra Petch",sans-serif;font-weight:700;
+  font-size:clamp(3rem,12vw,12rem);line-height:.92;letter-spacing:-.04em;
+  text-transform:uppercase;color:var(--color-text)}
+.headline .line{display:block;overflow:hidden}
+.headline .fill{display:block;transform:translateY(112%);will-change:transform}
+.headline em{font-style:normal;color:var(--color-energy);
+  text-shadow:0 0 34px rgba(28,240,154,.55),0 0 90px rgba(28,240,154,.28)}
+.headline .thin{color:var(--color-dim);-webkit-text-stroke:1px var(--color-dim);
+  color:transparent;text-shadow:none}
+
+.lead{margin-top:30px;max-width:44ch;color:var(--color-dim);
+  font-family:"IBM Plex Mono",monospace;font-size:clamp(13px,1.35vw,15px);
+  line-height:1.7;letter-spacing:.02em}
+.lead b{color:var(--color-text);font-weight:500}
+
+.cta-row{margin-top:40px;display:flex;flex-wrap:wrap;gap:18px;align-items:center}
+.btn{pointer-events:auto;position:relative;font-family:"Chakra Petch",sans-serif;
+  font-weight:600;font-size:14px;letter-spacing:.06em;text-transform:uppercase;
+  padding:16px 30px;border:1px solid var(--color-line);background:transparent;
+  color:var(--color-text);display:inline-flex;align-items:center;gap:12px;
+  will-change:transform;transition:border-color .3s,color .3s,background .3s}
+.btn.primary{border-color:rgba(28,240,154,.5);
+  box-shadow:0 0 0 1px rgba(28,240,154,.12) inset,0 0 28px rgba(28,240,154,.12)}
+.btn.primary .arrow{transition:transform .35s cubic-bezier(.16,1,.3,1)}
+.btn.primary:hover{background:var(--color-energy);color:var(--color-void);
+  border-color:var(--color-energy);box-shadow:0 0 40px rgba(28,240,154,.4)}
+.btn.primary:hover .arrow{transform:translateX(6px)}
+.btn.ghost{color:var(--color-dim)}
+.btn.ghost:hover{color:var(--color-text);border-color:var(--color-dim)}
+
+/* ---- corner HUD readouts ---- */
+.readout{position:fixed;z-index:4;pointer-events:none;
+  display:flex;flex-direction:column;gap:6px;line-height:1.5}
+.readout.rt{top:calc(var(--edge) + 46px);right:var(--edge);text-align:right;align-items:flex-end}
+.readout.lb{left:var(--edge);bottom:calc(var(--edge) + 64px)}
+.readout .row{white-space:nowrap}
+
+/* ---- status pill ---- */
+.pill{position:fixed;z-index:5;right:var(--edge);bottom:calc(var(--edge) + 64px);
+  display:inline-flex;align-items:center;gap:9px;padding:8px 14px;
+  border:1px solid var(--color-line);border-radius:100px;background:rgba(12,16,19,.55);
+  backdrop-filter:blur(6px);font-family:"IBM Plex Mono",monospace;font-size:11px;
+  letter-spacing:.18em;text-transform:uppercase;color:var(--color-text);pointer-events:auto}
+.pill .dot{width:7px;height:7px;border-radius:50%;background:var(--color-energy);
+  box-shadow:0 0 10px var(--color-energy);animation:pulse 1.8s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.35;transform:scale(.7)}}
+
+/* ---- marquee ---- */
+.marquee{position:fixed;left:0;right:0;bottom:0;z-index:4;pointer-events:none;
+  border-top:1px solid var(--color-line);background:linear-gradient(0deg,var(--color-void),transparent);
+  overflow:hidden;padding:14px 0;white-space:nowrap}
+.marquee .track{display:inline-block;will-change:transform;animation:march 42s linear infinite}
+.marquee span{font-family:"IBM Plex Mono",monospace;font-size:12px;letter-spacing:.24em;
+  text-transform:uppercase;color:var(--color-dim)}
+.marquee span .dot{color:var(--color-energy)}
+@keyframes march{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ---- scroll indicator ---- */
+.scroll{position:fixed;left:50%;bottom:calc(var(--edge) + 60px);transform:translateX(-50%);
+  z-index:4;display:flex;flex-direction:column;align-items:center;gap:9px;pointer-events:none}
+.scroll .bar{width:1px;height:38px;background:linear-gradient(var(--color-energy),transparent);
+  animation:drop 2.2s ease-in-out infinite}
+@keyframes drop{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}
+  50.1%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* ---- second panel (gives scroll meaning) ---- */
+.panel2{position:relative;z-index:3;padding:clamp(80px,14vh,160px) var(--edge) 140px;
+  border-top:1px solid var(--color-line);background:linear-gradient(180deg,transparent,rgba(4,6,10,.7))}
+.panel2 h2{font-family:"Chakra Petch",sans-serif;font-weight:600;text-transform:uppercase;
+  letter-spacing:-.02em;font-size:clamp(1.8rem,5vw,3.4rem);line-height:1;max-width:16ch;margin-bottom:56px}
+.panel2 h2 em{font-style:normal;color:var(--color-energy)}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:1px;
+  background:var(--color-line);border:1px solid var(--color-line)}
+.cell{background:var(--color-base);padding:30px 26px;min-height:190px;
+  display:flex;flex-direction:column;justify-content:space-between}
+.cell .k{font-family:"IBM Plex Mono",monospace;font-size:11px;letter-spacing:.2em;
+  text-transform:uppercase;color:var(--color-dim)}
+.cell .v{font-family:"Chakra Petch",sans-serif;font-weight:600;font-size:clamp(1.6rem,3vw,2.3rem);
+  color:var(--color-text);margin-top:16px}
+.cell .v em{font-style:normal;color:var(--color-energy)}
+.cell p{margin-top:14px;color:var(--color-dim);font-size:13px;line-height:1.6}
+
+:focus-visible{outline:2px solid var(--color-energy);outline-offset:3px}
+
+/* ---- responsive ---- */
+@media (max-width:720px){
+  .navlinks{display:none}
+  .readout.rt{top:calc(var(--edge) + 40px)}
+  .scroll{display:none}
+  .pill{bottom:calc(var(--edge) + 58px)}
+  .lead{max-width:100%}
+}
+@media (prefers-reduced-motion:reduce){
+  #scene{display:none}#fallback{display:block}
+  .headline .fill{transform:none!important}
+  .marquee .track,.scroll .bar,.pill .dot{animation:none}
+}
+</style>
+
+<canvas id="scene"></canvas>
+<div id="fallback" aria-hidden="true"></div>
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+
+<div class="frame" aria-hidden="true">
+  <span class="tick tl"></span><span class="tick tr"></span>
+  <span class="tick bl"></span><span class="tick br"></span>
+</div>
+
+<!-- NAV -->
+<header class="nav">
+  <a class="brand" href="#" aria-label="Blockzilla home">
+    <svg viewBox="0 0 100 100" aria-hidden="true"><g fill="currentColor" stroke="currentColor" stroke-width="1.1" stroke-linejoin="round">
+      <polygon points="12,28 50,6 50,40" fill-opacity=".55"/><polygon points="50,6 88,28 50,40" fill-opacity=".82"/>
+      <polygon points="88,28 68,58 50,40" fill-opacity=".46"/><polygon points="88,28 88,72 68,58" fill-opacity=".70"/>
+      <polygon points="88,72 50,94 68,58" fill-opacity=".50"/><polygon points="50,94 68,58 32,58" fill-opacity=".88"/>
+      <polygon points="50,94 32,58 12,72" fill-opacity=".60"/><polygon points="12,72 32,58 12,28" fill-opacity=".40"/>
+      <polygon points="12,28 32,58 50,40" fill-opacity=".70"/><polygon points="50,40 32,58 68,58" fill-opacity="1"/></g></svg>
+    <span class="wm">Blockzilla</span>
+  </a>
+  <nav class="navlinks" aria-label="Primary">
+    <a href="#">Network</a><a href="#">Agents</a><a href="#">Protocol</a><a href="#">Connect</a>
+  </nav>
+</header>
+
+<!-- CORNER READOUTS -->
+<div class="readout rt mono" aria-hidden="true">
+  <span class="row">SYS.<b>ONLINE</b> · MAINNET <b>99.99%</b></span>
+  <span class="row">BLOCK <b>#892,443</b> · NODES <b>14,208</b></span>
+  <span class="row">ITER <i>[03 / 03]</i></span>
+</div>
+
+
+<!-- HERO -->
+<main class="hero">
+  <div class="hero-inner">
+    <h1 class="headline">
+      <span class="line"><span class="fill">The <span class="thin">Eternal</span></span></span>
+      <span class="line"><span class="fill"><em>Ledger</em></span></span>
+    </h1>
+    <p class="lead"><b>Decentralised infrastructure, intelligently operated</b> — autonomous agents on the Aura platform, validating, self-healing and settling the network in perpetuity.</p>
+    <div class="cta-row">
+      <a href="#" class="btn primary" data-magnetic>Enter the Network <span class="arrow">→</span></a>
+      <a href="#protocol" class="btn ghost">Read the Protocol</a>
+    </div>
+  </div>
+</main>
+
+<!-- STATUS + SCROLL -->
+<div class="pill"><span class="dot"></span>Agents Active</div>
+<div class="scroll" aria-hidden="true"><span class="bar"></span><span class="mono">Scroll</span></div>
+
+<!-- SECOND PANEL -->
+<section class="panel2" id="protocol">
+  <h2>Infrastructure that <em>operates itself</em>.</h2>
+  <div class="grid">
+    <div class="cell"><span class="k">Throughput</span><span class="v"><em>48.6k</em> tx/s</span><p>Deterministic finality across a globally distributed validator set.</p></div>
+    <div class="cell"><span class="k">Autonomous Agents</span><span class="v"><em>14,208</em> live</span><p>On-chain workers scheduling, healing and optimising the mesh without operators.</p></div>
+    <div class="cell"><span class="k">Uptime</span><span class="v"><em>99.99%</em></span><p>Self-healing ops route around faults before they surface.</p></div>
+    <div class="cell"><span class="k">Built on</span><span class="v">Aura</span><p>The agentic platform powering Blockzilla's decentralised control plane.</p></div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee" aria-hidden="true">
+  <div class="track" id="track"></div>
+</div>
+
+<!-- importmap for three -->
+<script type="importmap">
+{"imports":{
+  "three":"https://unpkg.com/three@0.160.0/build/three.module.js",
+  "three/addons/":"https://unpkg.com/three@0.160.0/examples/jsm/"
+}}
+</script>
+
+<script type="module">
+/* ============================================================
+   BLOCKZILLA — SHADER NEBULA
+   1. cursor + marquee + magnetic (always on, no deps)
+   2. GSAP / ScrollTrigger / Lenis (dynamic, try/catch)
+   3. Three.js scene: nebula shader plane + faceted mark
+   4. Post: RenderPass + UnrealBloom + custom CA/grain pass
+   5. Perf: dpr cap, tab-hidden + offscreen pause, dispose
+   ============================================================ */
+
+const REDUCED = matchMedia('(prefers-reduced-motion:reduce)').matches;
+const MOBILE  = matchMedia('(max-width:720px)').matches;
+const cursor  = document.getElementById('cursor');
+
+/* -- marquee content -- */
+(() => {
+  const words = 'DECENTRALISED INFRASTRUCTURE · AUTONOMOUS AGENTS · FULL NODES · VALIDATORS · ON-CHAIN AUTOMATION · AGENTIC AI · SELF-HEALING OPS · ';
+  const unit = `<span>${words.replaceAll('·','<span class="dot">·</span>')}</span>`;
+  document.getElementById('track').innerHTML = unit.repeat(2);
+})();
+
+/* -- custom cursor -- */
+const pointer = {x:innerWidth/2, y:innerHeight/2, tx:innerWidth/2, ty:innerHeight/2};
+addEventListener('pointermove', e => { pointer.tx = e.clientX; pointer.ty = e.clientY; });
+(function cur(){
+  pointer.x += (pointer.tx-pointer.x)*0.2; pointer.y += (pointer.ty-pointer.y)*0.2;
+  cursor.style.transform = `translate(${pointer.x}px,${pointer.y}px) translate(-50%,-50%)`;
+  requestAnimationFrame(cur);
+})();
+document.querySelectorAll('a,button,.btn,[data-magnetic]').forEach(el=>{
+  el.addEventListener('pointerenter',()=>cursor.classList.add('big'));
+  el.addEventListener('pointerleave',()=>cursor.classList.remove('big'));
+});
+
+/* -- magnetic buttons -- */
+document.querySelectorAll('[data-magnetic]').forEach(el=>{
+  el.addEventListener('pointermove',e=>{
+    const r=el.getBoundingClientRect();
+    el.style.transform=`translate(${(e.clientX-r.left-r.width/2)*.28}px,${(e.clientY-r.top-r.height/2)*.4}px)`;
+  });
+  el.addEventListener('pointerleave',()=>el.style.transform='');
+});
+
+/* -- normalised mouse for the scene (-1..1) -- */
+const scenePtr = {x:0,y:0,tx:0,ty:0};
+addEventListener('pointermove',e=>{
+  scenePtr.tx=(e.clientX/innerWidth)*2-1;
+  scenePtr.ty=(e.clientY/innerHeight)*2-1;
+});
+
+/* ---------- 2. GSAP / Lenis (graceful) ---------- */
+let gsap=null, ScrollTrigger=null, lenis=null;
+async function initMotion(){
+  if(REDUCED) return;
+  try{
+    const g = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.5/+esm');
+    gsap = g.gsap || g.default;
+    const st = await import('https://cdn.jsdelivr.net/npm/gsap@3.12.5/ScrollTrigger.js/+esm');
+    ScrollTrigger = st.ScrollTrigger || st.default;
+    gsap.registerPlugin(ScrollTrigger);
+    const L = await import('https://cdn.jsdelivr.net/npm/lenis@1.1.13/+esm');
+    const Lenis = L.default || L.Lenis;
+    lenis = new Lenis({lerp:0.09, wheelMultiplier:0.9});
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add(t=>lenis.raf(t*1000));
+    gsap.ticker.lagSmoothing(0);
+  }catch(err){ console.warn('motion libs failed, CSS fallback', err); }
+}
+
+function revealHeadline(){
+  const fills=[...document.querySelectorAll('.headline .fill')];
+  const others=[...document.querySelectorAll('.eyebrow,.lead,.cta-row')];
+  if(gsap){
+    const tl=gsap.timeline({defaults:{ease:'expo.out'}});
+    tl.to(fills,{yPercent:0,duration:1.25,stagger:0.12},0.15)
+      .from(others,{y:26,opacity:0,duration:1,stagger:0.1},'-=0.8');
+    if(ScrollTrigger){
+      gsap.to('.hero-inner',{yPercent:-18,opacity:0.15,ease:'none',
+        scrollTrigger:{trigger:'.hero',start:'top top',end:'bottom top',scrub:true}});
+    }
+  }else{
+    fills.forEach((el,i)=>el.animate(
+      [{transform:'translateY(112%)'},{transform:'translateY(0)'}],
+      {duration:1100,delay:150+i*120,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}));
+    others.forEach((el,i)=>el.animate(
+      [{transform:'translateY(24px)',opacity:0},{transform:'none',opacity:1}],
+      {duration:900,delay:400+i*100,easing:'cubic-bezier(.16,1,.3,1)',fill:'forwards'}));
+  }
+}
+
+/* ---------- 3+4. THREE scene ---------- */
+let renderer, composer, running=true, rafId, camera, scene, nebulaMat, caPass, markGroup, disposables=[];
+
+async function initScene(){
+  if(REDUCED) throw new Error('reduced-motion');
+  const THREE = await import('three');
+  const {EffectComposer} = await import('three/addons/postprocessing/EffectComposer.js');
+  const {RenderPass}     = await import('three/addons/postprocessing/RenderPass.js');
+  const {UnrealBloomPass}= await import('three/addons/postprocessing/UnrealBloomPass.js');
+  const {ShaderPass}     = await import('three/addons/postprocessing/ShaderPass.js');
+
+  const canvas = document.getElementById('scene');
+  renderer = new THREE.WebGLRenderer({canvas, antialias:true, alpha:false, powerPreference:'high-performance'});
+  renderer.setPixelRatio(Math.min(MOBILE?1.5:2, devicePixelRatio));
+  renderer.setSize(innerWidth, innerHeight);
+  renderer.setClearColor(0x04060A, 1);
+
+  const C = h => new THREE.Color(h);
+  const cVoid=C('#04060A'), cEnergy=C('#1CF09A'), cEnergy2=C('#5BE9FF'),
+        cMark=C('#BFEFD9'), cPanel=C('#0C1013');
+
+  scene = new THREE.Scene();
+  scene.fog = new THREE.FogExp2(0x04060A, 0.03);
+  camera = new THREE.PerspectiveCamera(46, innerWidth/innerHeight, 0.1, 100);
+  camera.position.set(0,0,8);
+  scene.add(camera);
+
+  /* --- NEBULA: fullscreen quad parented to camera --- */
+  const nebGeo = new THREE.PlaneGeometry(1,1);
+  nebulaMat = new THREE.ShaderMaterial({
+    depthTest:false, depthWrite:false,
+    uniforms:{
+      uTime:{value:0}, uMouse:{value:new THREE.Vector2()},
+      uRes:{value:new THREE.Vector2(innerWidth,innerHeight)},
+      cVoid:{value:cVoid}, cEnergy:{value:cEnergy}, cEnergy2:{value:cEnergy2}
+    },
+    vertexShader:`
+      varying vec2 vUv;
+      void main(){ vUv=uv; gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader:`
+      precision highp float;
+      varying vec2 vUv;
+      uniform float uTime; uniform vec2 uMouse, uRes;
+      uniform vec3 cVoid, cEnergy, cEnergy2;
+      float hash(vec2 p){ p=fract(p*vec2(123.34,345.45)); p+=dot(p,p+34.345); return fract(p.x*p.y); }
+      float noise(vec2 p){
+        vec2 i=floor(p), f=fract(p); vec2 u=f*f*(3.0-2.0*f);
+        float a=hash(i), b=hash(i+vec2(1,0)), c=hash(i+vec2(0,1)), d=hash(i+vec2(1,1));
+        return mix(a,b,u.x)+(c-a)*u.y*(1.0-u.x)+(d-b)*u.x*u.y;
+      }
+      float fbm(vec2 p){
+        float v=0.0, a=0.5; mat2 m=mat2(1.6,1.2,-1.2,1.6);
+        for(int i=0;i<6;i++){ v+=a*noise(p); p=m*p; a*=0.5; }
+        return v;
+      }
+      void main(){
+        vec2 uv=vUv;
+        vec2 p=(uv-0.5); p.x*=uRes.x/uRes.y;
+        float t=uTime*0.045;
+        // DOMAIN WARPING — flow like an aurora
+        vec2 q=vec2(fbm(p*1.4+vec2(0.0,t)), fbm(p*1.4+vec2(5.2,-t)));
+        vec2 r=vec2(fbm(p*1.4+q*1.6+vec2(1.7,9.2)+t*0.6+uMouse*0.25),
+                    fbm(p*1.4+q*1.6+vec2(8.3,2.8)-t*0.5));
+        float f=fbm(p*1.4+r*1.7);
+        // colour ONLY in brand tones, low intensity
+        float band=smoothstep(0.15,0.95,f);
+        vec3 col=mix(cVoid, cEnergy*0.55, pow(band,1.5));
+        col=mix(col, cEnergy2*0.42, pow(smoothstep(0.35,1.0,length(r)),2.0)*0.55);
+        // bright filaments (the ledger threads)
+        float fil=smoothstep(0.56,0.60,f)-smoothstep(0.60,0.66,f);
+        col+=cEnergy*fil*0.7;
+        // ---- HUD grid-horizon: perspective floor ----
+        float horizon=0.30;
+        if(uv.y<horizon){
+          float d=horizon-uv.y;
+          float persp=0.05/(d+0.015);
+          float gx=(uv.x-0.5)*persp*26.0;
+          float gz=persp*10.0 - uTime*0.35;
+          float lx=smoothstep(0.06,0.0,abs(fract(gx)-0.5));
+          float lz=smoothstep(0.06,0.0,abs(fract(gz)-0.5));
+          float fade=smoothstep(0.0,0.10,d)*smoothstep(0.30,0.12,d);
+          col+=cEnergy2*(lx+lz)*fade*0.16;
+        }
+        float vig=smoothstep(1.15,0.25,length(uv-0.5));
+        col*=vig; col=mix(cVoid,col,0.92);
+        gl_FragColor=vec4(col,1.0);
+      }`
+  });
+  const nebula = new THREE.Mesh(nebGeo, nebulaMat);
+  nebula.position.z=-6; nebula.renderOrder=-1;
+  camera.add(nebula);
+  const sizeNebula=()=>{
+    const dist=6, vF=THREE.MathUtils.degToRad(camera.fov);
+    const h=2*Math.tan(vF/2)*dist; nebula.scale.set(h*camera.aspect, h, 1);
+  };
+  sizeNebula();
+  disposables.push(nebGeo, nebulaMat);
+
+  /* --- FACETED MARK: dark icosahedron + fresnel energy rim + wireframe --- */
+  markGroup = new THREE.Group();
+  const icoGeo = new THREE.IcosahedronGeometry(2.15, 0);
+  const rimMat = new THREE.ShaderMaterial({
+    transparent:true,
+    uniforms:{ uTime:{value:0}, cCore:{value:cPanel}, cRim:{value:cEnergy}, cRim2:{value:cEnergy2} },
+    vertexShader:`
+      varying vec3 vN; varying vec3 vView;
+      void main(){ vec4 mv=modelViewMatrix*vec4(position,1.0);
+        vN=normalize(normalMatrix*normal); vView=normalize(-mv.xyz);
+        gl_Position=projectionMatrix*mv; }`,
+    fragmentShader:`
+      varying vec3 vN; varying vec3 vView; uniform float uTime;
+      uniform vec3 cCore,cRim,cRim2;
+      void main(){
+        float fr=pow(1.0-max(dot(normalize(vN),normalize(vView)),0.0),2.6);
+        vec3 rim=mix(cRim,cRim2,0.5+0.5*sin(uTime*0.3));
+        vec3 col=mix(cCore*0.5, rim, fr);
+        gl_FragColor=vec4(col, 0.28+fr*0.72);
+      }`
+  });
+  const solid = new THREE.Mesh(icoGeo, rimMat);
+  const wire  = new THREE.LineSegments(
+    new THREE.WireframeGeometry(icoGeo),
+    new THREE.LineBasicMaterial({color:cMark, transparent:true, opacity:0.22})
+  );
+  markGroup.add(solid, wire);
+  markGroup.position.set(2.4, 0.4, 0);
+  markGroup.rotation.set(0.4,0.6,0.1);
+  scene.add(markGroup);
+  disposables.push(icoGeo, rimMat, wire.geometry, wire.material);
+
+  /* --- POST: bloom + custom CA/grain --- */
+  composer = new EffectComposer(renderer);
+  composer.addPass(new RenderPass(scene, camera));
+  const bloom = new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight), 0.7, 0.55, 0.55);
+  composer.addPass(bloom);
+
+  const CAShader = {
+    uniforms:{ tDiffuse:{value:null}, uTime:{value:0}, uAmount:{value:0.0018}, uGrain:{value:0.055} },
+    vertexShader:`varying vec2 vUv; void main(){ vUv=uv;
+      gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0); }`,
+    fragmentShader:`
+      varying vec2 vUv; uniform sampler2D tDiffuse;
+      uniform float uTime,uAmount,uGrain;
+      float rnd(vec2 p){ return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453); }
+      void main(){
+        vec2 d=vUv-0.5; float r2=dot(d,d);
+        vec2 off=d*uAmount*(1.0+r2*3.5);
+        float cr=texture2D(tDiffuse,vUv+off).r;
+        float cg=texture2D(tDiffuse,vUv).g;
+        float cb=texture2D(tDiffuse,vUv-off).b;
+        vec3 col=vec3(cr,cg,cb);
+        float g=rnd(vUv*vec2(1024.0,768.0)+fract(uTime));
+        col+=(g-0.5)*uGrain;
+        col*=mix(0.86,1.0,smoothstep(1.2,0.2,length(d)*2.0));
+        gl_FragColor=vec4(col,1.0);
+      }`
+  };
+  caPass = new ShaderPass(CAShader); caPass.renderToScreen=true;
+  composer.addPass(caPass);
+
+  addEventListener('resize', ()=>{
+    camera.aspect=innerWidth/innerHeight; camera.updateProjectionMatrix();
+    renderer.setSize(innerWidth,innerHeight);
+    composer.setSize(innerWidth,innerHeight);
+    nebulaMat.uniforms.uRes.value.set(innerWidth,innerHeight);
+    sizeNebula();
+  });
+
+  const clock = new THREE.Clock();
+  function tick(){
+    rafId=requestAnimationFrame(tick);
+    if(!running) return;
+    const el=clock.getElapsedTime();
+    scenePtr.x += (scenePtr.tx-scenePtr.x)*0.045;
+    scenePtr.y += (scenePtr.ty-scenePtr.y)*0.045;
+    nebulaMat.uniforms.uTime.value=el;
+    nebulaMat.uniforms.uMouse.value.set(scenePtr.x, -scenePtr.y);
+    rimMat.uniforms.uTime.value=el;
+    caPass.uniforms.uTime.value=el;
+    camera.position.x = scenePtr.x*0.55 + Math.sin(el*0.12)*0.18;
+    camera.position.y = -scenePtr.y*0.4 + Math.cos(el*0.15)*0.12;
+    camera.lookAt(0,0,0);
+    markGroup.rotation.y += 0.0016;
+    markGroup.rotation.x = 0.4 + Math.sin(el*0.2)*0.12;
+    composer.render();
+  }
+  tick();
+
+  document.addEventListener('visibilitychange',()=>{ running=!document.hidden; });
+  new IntersectionObserver(([e])=>{ running=e.isIntersecting && !document.hidden; },
+    {threshold:0.01}).observe(document.getElementById('scene'));
+}
+
+/* ---------- boot ---------- */
+(async ()=>{
+  await initMotion();
+  try{
+    await initScene();
+  }catch(err){
+    console.warn('WebGL scene unavailable → static fallback', err);
+    document.documentElement.classList.add('nowebgl');
+    disposables.forEach(d=>d.dispose&&d.dispose());
+    if(renderer) renderer.dispose();
+  }
+  revealHeadline();
+})();
+</script>
+<style>
+/* ---- reveal failsafe: never leave the headline/HUD hidden if the GSAP entrance
+   fails to fire (CDN/export-shape hiccup). Applied after a short delay. ---- */
+.force-reveal h1 span, .force-reveal .fill, .force-reveal .l-near .fill, .force-reveal .l-far .fill,
+.force-reveal .lead, .force-reveal .sub, .force-reveal .cta-row, .force-reveal .status-pill,
+.force-reveal .eyebrow, .force-reveal .pill, .force-reveal .hero-copy, .force-reveal .btn,
+.force-reveal .headline .fill, .force-reveal .hero-title .fill {
+  transform: none !important; opacity: 1 !important;
+  clip-path: none !important; -webkit-clip-path: none !important; visibility: visible !important;
+}
+</style>
+<script>
+// guarantee hero copy is visible even if the entrance animation never runs
+setTimeout(function(){ document.documentElement.classList.add('force-reveal'); }, 2500);
+</script>
+<style>
+/* ---- mobile polish (<=640px): collapse nav, keep HUD/pill inside the frame,
+   size the giant headline to stay dominant without over-bleeding ---- */
+@media (max-width:640px){
+  nav .nav-links, nav .navlinks { display:none !important; }
+  .readout, .hud { font-size:8.5px !important; line-height:1.55 !important; letter-spacing:.05em !important;
+    max-width:72vw !important; white-space:normal !important; }
+  .status-pill, .pill { font-size:9.5px !important; }
+  h1, #headline, .hero-title, .headline { font-size:clamp(2.6rem,15vw,4.8rem) !important; }
+  .cta-row, .cta, .buttons { flex-wrap:wrap !important; gap:10px !important; }
+  .btn { font-size:11px !important; }
+}
+@media (max-width:400px){
+  h1, #headline, .hero-title, .headline { font-size:clamp(2.3rem,16vw,3.6rem) !important; }
+}
+</style>
+<style id="embed-mode">
+  /* the parent site owns the header + cursor; hide this hero's own chrome */
+  nav, header { display:none !important; }
+  #cursor, .cursor { display:none !important; }
+  .readout, .hud { top:64px !important; }
+  /* lock to one viewport: parent drives scroll; nothing here scrolls internally */
+  html, body { background:#04060A; height:100% !important; min-height:0 !important; overflow:hidden !important; }
+  /* SCROLL-OFF: the parent sets --soff/--sop from scroll progress; this outranks each
+     hero's 2.5s "force-reveal" reset (extra `html` bumps specificity) so the copy
+     translates up + fades as you scroll, revealing the WebGL scene behind it. */
+  html .hero-copy, html .stage, html .hero-inner,
+  html.force-reveal .hero-copy, html.force-reveal .stage, html.force-reveal .hero-inner{
+    transform: translate3d(0, var(--soff,0px), 0) !important;
+    opacity: var(--sop, 1) !important;
+    will-change: transform, opacity;
+  }
+</style>
+<script>
+(function(){
+  var isEmbed = window.top !== window.self;
+  // rewire the hero CTAs to the parent site's real sections
+  function wire(){
+    document.querySelectorAll('.cta-row a, .cta a, .btn, .buttons a').forEach(function(a,i){
+      a.target='_parent'; a.setAttribute('href', (i%2===0)?'/#network':'/#services'); });
+  }
+  if(document.readyState!=='loading') wire(); else addEventListener('DOMContentLoaded', wire);
+  if(!isEmbed) return;
+
+  // MOUSE: parent feeds pointer coords → replay as real pointer/mouse moves so the
+  // hero's own parallax handlers fire (iframe is pointer-events:none, so no native ones).
+  window.__setPointer = function(x,y){
+    try{
+      window.dispatchEvent(new PointerEvent('pointermove',{clientX:x,clientY:y,bubbles:true}));
+      window.dispatchEvent(new MouseEvent('mousemove',{clientX:x,clientY:y,bubbles:true}));
+    }catch(_){ }
+  };
+
+  // SCROLL: parent sets window.__p (0..1). The patched scrollP drives the camera;
+  // here we map it to the copy translate/fade via CSS vars.
+  var de = document.documentElement;
+  (function tick(){
+    var p = +window.__p || 0, vh = window.innerHeight || 800;
+    de.style.setProperty('--soff', (-p*vh*0.85)+'px');
+    de.style.setProperty('--sop', String(Math.max(0, 1 - p*1.5)));
+    requestAnimationFrame(tick);
+  })();
+})();
+</script>
+</html>

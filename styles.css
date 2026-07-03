@@ -27,8 +27,15 @@ a { color: inherit; text-decoration: none; }
 .scene-scrim {
   position: fixed; inset: 0; z-index: 1; pointer-events: none;
   background:
-    radial-gradient(120% 90% at 50% 40%, transparent 40%, color-mix(in srgb, var(--bg) 82%, transparent) 100%),
-    linear-gradient(to bottom, color-mix(in srgb, var(--bg) 70%, transparent), transparent 22% 78%, var(--bg));
+    /* top: darken under the nav so links stay legible */
+    linear-gradient(to bottom,
+      color-mix(in srgb, var(--bg) 74%, transparent) 0,
+      color-mix(in srgb, var(--bg) 20%, transparent) 9%,
+      transparent 17%),
+    /* bottom: brief fade so the scroll hint + content seam read cleanly */
+    linear-gradient(to top,
+      color-mix(in srgb, var(--bg) 66%, transparent) 0,
+      transparent 15%);
 }
 /* static fallback if WebGL fails */
 .webgl-failed #bg { background:
@@ -264,9 +271,6 @@ a { color: inherit; text-decoration: none; }
 /* ---- footer ---- */
 .foot { border-top: 1px solid var(--line); padding: var(--sp-6) clamp(var(--sp-4), 5vw, var(--sp-8)); }
 .foot__row { --row-gap: var(--sp-4); gap: var(--sp-4); }
-.foot__links { --row-gap: var(--sp-4); }
-.foot__links a { transition: color var(--dur) var(--ease); }
-.foot__links a:hover { color: var(--fg) !important; }
 @media (max-width: 700px){ .foot__row { flex-direction: column; align-items: flex-start; } }
 
 /* ---- mobile typography safeguards (prevent big display headings overflowing) ---- */
@@ -283,3 +287,8 @@ a { color: inherit; text-decoration: none; }
 @media (prefers-reduced-motion: no-preference){
   .section { animation: rise .8s var(--ease-out) both; animation-timeline: view(); animation-range: entry 0% cover 26%; }
 }
+
+/* footer link row (public site: whitepaper + github) */
+.foot__links { --row-gap: var(--sp-4); }
+.foot__links a { transition: color var(--dur) var(--ease); }
+.foot__links a:hover { color: var(--fg) !important; }
