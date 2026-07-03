@@ -404,56 +404,69 @@ async function bootScene(){
     return 42.0*dot(m*m,vec4(dot(p0,x0),dot(p1,x1),dot(p2,x2),dot(p3,x3)));
   }`;
 
-  /* ---------- CRYSTALLINE MONOLITH (shader-displaced, flat-shaded) ---------- */
+  /* ---------- CRYSTALLINE MONOLITH (baked facets, flat-shaded) ----------
+     The facet normal is BAKED per-face on the CPU (computeVertexNormals on the
+     non-indexed icosahedron) and read straight from the geometry — NO screen-space
+     derivatives (dFdx/dFdy), which used to degenerate at facet edges and paint
+     flickering black squares. A subtle organic displacement is baked ONCE so the
+     faces never move per-frame (life = rotation + scale-breath + shimmer), keeping
+     the baked flat normals valid forever. */
   const geo=new THREE.IcosahedronGeometry(1.7,3);
+  (function bakeFacets(g){
+    const p=g.attributes.position, v=new THREE.Vector3();
+    for(let i=0;i<p.count;i++){
+      v.fromBufferAttribute(p,i); const d=v.clone().normalize();
+      // deterministic + seam-safe: a pure function of DIRECTION, so coincident
+      // verts of neighbouring faces displace identically (no cracks)
+      const n = Math.sin(d.x*3.1+d.y*1.7)*0.55
+              + Math.sin(d.y*2.3-d.z*2.9)*0.30
+              + Math.sin(d.z*4.1+d.x*1.3)*0.18;
+      v.addScaledVector(d, 0.10*n);
+      p.setXYZ(i, v.x, v.y, v.z);
+    }
+    p.needsUpdate=true;
+    g.computeVertexNormals();   // non-indexed → exact FLAT per-face normals
+  })(geo);
+
   const monoMat=new THREE.ShaderMaterial({
     transparent:true, depthWrite:false, side:THREE.FrontSide,
-    extensions:{derivatives:true},
     uniforms:{
       uTime:{value:0}, uEnergy:{value:col(C.energy)}, uEnergy2:{value:col(C.energy2)},
       uMark:{value:col(C.mark)}
     },
     vertexShader:`
-      uniform float uTime; varying vec3 vView; varying vec3 vWorld;
-      ${NOISE}
+      varying vec3 vView; varying vec3 vWorld; varying vec3 vNrm;
       void main(){
-        vec3 p=position; vec3 dir=normalize(position);
-        float n=snoise(dir*1.5+uTime*0.02);
-        float n2=snoise(dir*3.4-uTime*0.015);
-        p+=dir*(0.11*n+0.05*n2);
-        vec4 mv=modelViewMatrix*vec4(p,1.0);
-        vView=mv.xyz; vWorld=(modelMatrix*vec4(p,1.0)).xyz;
+        vec4 mv=modelViewMatrix*vec4(position,1.0);
+        vView=mv.xyz; vWorld=(modelMatrix*vec4(position,1.0)).xyz;
+        vNrm=normalize(normalMatrix*normal);   // baked flat face normal — no derivatives
         gl_Position=projectionMatrix*mv;
       }`,
     fragmentShader:`
       precision highp float;
       uniform float uTime; uniform vec3 uEnergy; uniform vec3 uEnergy2; uniform vec3 uMark;
-      varying vec3 vView; varying vec3 vWorld;
+      varying vec3 vView; varying vec3 vWorld; varying vec3 vNrm;
       void main(){
-        // flat per-facet normal from screen-space derivatives (robust across GPUs)
-        vec3 N=normalize(cross(dFdx(vView),dFdy(vView)));
+        vec3 N=normalize(vNrm);                 // artifact-free per-facet normal
         vec3 V=normalize(-vView);
         float fres=pow(1.0-max(dot(N,V),0.0),2.4);
         vec3 L=normalize(vec3(0.35,0.7,0.55));
         float diff=max(dot(N,L),0.0);
         float facet=0.30+0.70*diff;
-        // iridescence kept strictly within green→cyan brand band
         float irid=0.5+0.5*sin(dot(N,V)*6.0+uTime*0.5+vWorld.y*2.2);
         vec3 base=mix(uMark*0.30,uEnergy,facet*0.72);
         base=mix(base,uEnergy2,irid*0.20);
         vec3 rim=uEnergy2*fres*1.25;
         vec3 col=base*0.60+rim;
-        // alpha floor keeps every facet a translucent GREEN pane (never a
-        // transparent hole showing the void as a black square during rotation)
-        float alpha=clamp(0.42+fres*0.55,0.0,0.97);
+        float alpha=clamp(0.42+fres*0.55,0.0,0.97);  // opaque floor: never shows the void
         gl_FragColor=vec4(col,alpha);
       }`
   });
   const crystal=new THREE.Mesh(geo,monoMat); monolith.add(crystal);
 
-  /* thin wireframe over the facets for that faceted-mark read */
+  /* thin wireframe locked to the SAME baked facets (a hair larger shell) */
   const wire=new THREE.LineSegments(
-    new THREE.WireframeGeometry(new THREE.IcosahedronGeometry(1.72,3)),
+    new THREE.WireframeGeometry(geo.clone().scale(1.012,1.012,1.012)),
     new THREE.LineBasicMaterial({color:col(C.energy2),transparent:true,opacity:0.10})
   );
   monolith.add(wire);
@@ -529,7 +542,10 @@ async function bootScene(){
   /* ================================================================
      POST — Bloom (green glow) + custom CA/grain ShaderPass
      ================================================================ */
-  const composer=new EffectComposer(renderer);
+  // MSAA render target kills edge-crawl/shimmer on the rotating crystal (WebGL2)
+  const _rtsz=renderer.getDrawingBufferSize(new THREE.Vector2());
+  const _samples=renderer.capabilities.isWebGL2?(COARSE?2:4):0;
+  const composer=new EffectComposer(renderer,new THREE.WebGLRenderTarget(_rtsz.x,_rtsz.y,{samples:_samples}));
   composer.setPixelRatio(DPR);
   composer.addPass(new RenderPass(scene,camera));
   const bloom=new UnrealBloomPass(new THREE.Vector2(innerWidth,innerHeight),0.6,0.6,0.24);
@@ -597,22 +613,24 @@ async function bootScene(){
   /* ================================================================
      OFF-AXIS placement + resize
      ================================================================ */
+  let monoBase=1;
   function layout(){
     const w=innerWidth,h=innerHeight; const aspect=w/h;
     renderer.setSize(w,h); composer.setSize(w,h);
     camera.aspect=aspect; camera.updateProjectionMatrix();
     // push monolith to the right on wide screens, centre-high on narrow
-    if(w<=820){ world.position.set(0,1.4,0); const s=Math.min(1,w/720); monolith.scale.setScalar(0.82*s+0.2); }
-    else{ world.position.set(2.3,0.2,0); monolith.scale.setScalar(1); }
+    if(w<=820){ world.position.set(0,1.4,0); const s=Math.min(1,w/720); monoBase=0.82*s+0.2; }
+    else{ world.position.set(2.3,0.2,0); monoBase=1; }
+    monolith.scale.setScalar(monoBase);
   }
   layout(); addEventListener('resize',layout);
 
   /* ================================================================
      RENDER LOOP — paused when tab hidden or hero off-screen
      ================================================================ */
-  const clock=new THREE.Clock();
   let running=true, inView=true, looping=false;
-  function wake(){ if(running&&inView&&!looping){looping=true; requestAnimationFrame(tick);} }
+  let simTime=0, lastNow=performance.now();
+  function wake(){ if(running&&inView&&!looping){looping=true; lastNow=performance.now(); requestAnimationFrame(tick);} }
 
   document.addEventListener('visibilitychange',()=>{running=!document.hidden; wake();});
   // pause when the whole hero+canvas scrolls out of view
@@ -622,7 +640,12 @@ async function bootScene(){
   function tick(){
     if(!running||!inView){looping=false; return;} // single owned RAF chain
     requestAnimationFrame(tick);
-    const t=clock.getElapsedTime();
+    // MONOTONIC, clamped clock — never jumps after a pause (scroll-out/in, tab switch);
+    // resetting lastNow in wake() means the first resumed frame advances ~0, not the gap.
+    const now=performance.now();
+    let dt=(now-lastNow)/1000; lastNow=now;
+    dt=Math.min(dt,0.05);
+    simTime+=dt; const t=simTime;
 
     // eased mouse for breathing parallax
     mouse.tx+=(mouse.nx-mouse.tx)*0.05; mouse.ty+=(mouse.ny-mouse.ty)*0.05;
@@ -637,6 +660,10 @@ async function bootScene(){
     monolith.rotation.x=Math.sin(t*0.1)*0.05-mouse.ty*0.1;
     core.rotation.y=-t*0.22; core.rotation.x=t*0.16;
     wire.rotation.copy(crystal.rotation);
+
+    // gentle uniform breathing — replaces the old per-vertex noise morph. Uniform
+    // scale preserves the baked normals, so the facets stay artifact-free.
+    monolith.scale.setScalar(monoBase*(1.0+0.02*Math.sin(t*0.8)));
 
     // starfield drift + depth parallax
     starsFar.position.x=mouse.tx*0.6; starsFar.position.y=mouse.ty*0.4; starsFar.rotation.z=t*0.006;
